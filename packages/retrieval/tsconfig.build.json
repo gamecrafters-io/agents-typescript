@@ -1,0 +1,10 @@
+{
+  "extends": "@gamecrafters/typescript-config/base",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build",
+    "declaration": true,
+    "noEmit": false
+  },
+  "include": ["src"]
+}

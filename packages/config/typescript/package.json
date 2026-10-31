@@ -1,0 +1,12 @@
+{
+  "name": "@gamecrafters/typescript-config",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "exports": {
+    "./base": "./base.json"
+  },
+  "peerDependencies": {
+    "typescript": "~6.0.3"
+  }
+}

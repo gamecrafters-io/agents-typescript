@@ -1,0 +1,65 @@
+{
+  "name": "@gamecrafters/agents-retrieval",
+  "version": "0.0.1",
+  "description": "Retrieval-augmented generation, document loading, and vector memory for AI agents.",
+  "license": "MIT",
+  "author": "GameCrafters",
+  "keywords": [
+    "ai",
+    "agents",
+    "typescript",
+    "rag",
+    "embeddings",
+    "chromadb"
+  ],
+  "homepage": "https://github.com/gamecrafters-io/agents-typescript/tree/main/packages/retrieval",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gamecrafters-io/agents-typescript.git",
+    "directory": "packages/retrieval"
+  },
+  "bugs": {
+    "url": "https://github.com/gamecrafters-io/agents-typescript/issues"
+  },
+  "private": false,
+  "type": "module",
+  "files": [
+    "build"
+  ],
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=26"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit && tsc -p tsconfig.test.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@gamecrafters/agents-core": "0.0.1",
+    "chromadb": "^3.5.0",
+    "openai": "^7.47.0",
+    "pdfjs-dist": "^6.4.299",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@gamecrafters/eslint-config": "*",
+    "@gamecrafters/typescript-config": "*",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  }
+}
