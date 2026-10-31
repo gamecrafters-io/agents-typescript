@@ -6,3 +6,8 @@ build/
 
 # Turborepo
 .turbo/
+
+# Copies of the root README and LICENSE that packages/agents packs while
+# publishing
+packages/agents/README.md
+packages/agents/LICENSE

@@ -11,7 +11,7 @@
     "typescript",
     "evaluation"
   ],
-  "homepage": "https://github.com/gamecrafters-io/agents-typescript/tree/main/packages/agents",
+  "homepage": "https://github.com/gamecrafters-io/agents-typescript#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gamecrafters-io/agents-typescript.git",
@@ -40,22 +40,26 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsdown",
     "typecheck": "tsc -p tsconfig.build.json --noEmit && tsc -p tsconfig.test.json",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "turbo run build --filter=@gamecrafters/agents...",
+    "prepack": "node -e \"const fs = require('node:fs'); fs.copyFileSync('../../README.md', 'README.md'); fs.copyFileSync('../../LICENSE', 'LICENSE');\"",
+    "postpack": "node -e \"const fs = require('node:fs'); fs.rmSync('README.md', {force: true}); fs.rmSync('LICENSE', {force: true});\""
   },
   "dependencies": {
-    "@gamecrafters/agents-core": "0.0.1",
     "openai": "^7.47.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@gamecrafters/agents-core": "0.0.1",
     "@gamecrafters/eslint-config": "*",
     "@gamecrafters/typescript-config": "*",
     "@types/node": "^26.6.6",
     "eslint": "^10.14.0",
+    "tsdown": "^0.23.4",
     "typescript": "~6.0.3",
     "vitest": "^5.0.5"
   }

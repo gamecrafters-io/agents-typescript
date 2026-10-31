@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/gamecrafters-io/agents-typescript/issues"
   },
-  "private": false,
+  "private": true,
   "type": "module",
   "files": [
     "build"
@@ -35,10 +35,6 @@
   },
   "engines": {
     "node": ">=26"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
