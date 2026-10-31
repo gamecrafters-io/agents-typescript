@@ -16,9 +16,9 @@
   <p>
     <a href="#usage">Usage</a>
     &middot;
-    <a href="https://github.com/gamecrafters-io/agents-typescript/issues/new?labels=bug">Report a bug</a>
+    <a href="https://github.com/gamecrafters-io/agents-typescript/issues/new">Report a bug</a>
     &middot;
-    <a href="https://github.com/gamecrafters-io/agents-typescript/issues/new?labels=enhancement">Suggest a feature</a>
+    <a href="https://github.com/gamecrafters-io/agents-typescript/issues/new">Suggest a feature</a>
   </p>
 </div>
 
