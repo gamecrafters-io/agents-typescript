@@ -1,0 +1,94 @@
+# Publishes @gamecrafters/agents to npm, then a GitHub Release, for each v*
+# tag. npm authenticates the publish through trusted publishing, so the
+# package must trust this workflow first:
+#
+#   npm trust github @gamecrafters/agents --file cd.yml \
+#     --repo gamecrafters-io/agents-typescript --allow-publish
+name: Continuous deployment
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: Check release
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Publish to npm
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Lets npm trade this run's OIDC token for a short-lived publish token
+      # and sign the package's provenance.
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '26'
+          registry-url: https://registry.npmjs.org
+          # A poisoned dependency cache would run next to the OIDC token.
+          package-manager-cache: false
+
+      - name: Check the tag matches the package version
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          package_version="$(node -p 'require("./packages/agents/package.json").version')"
+          if [[ "${VERSION}" != "v${package_version}" ]]; then
+            printf '::error::Tag %s does not match package version %s.\n' \
+              "${VERSION}" "${package_version}" >&2
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish @gamecrafters/agents
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          spec="@gamecrafters/agents@${VERSION#v}"
+          # A version that is already on npm, such as the first one, which is
+          # published by hand, still gets its GitHub Release. npm view prints
+          # nothing for a missing version and fails for a missing package.
+          if [[ -n "$(npm view "${spec}" version 2>/dev/null)" ]]; then
+            echo "::notice::${spec} is already on npm, so it isn't published again."
+            exit 0
+          fi
+          args=(--workspace @gamecrafters/agents)
+          if [[ "${VERSION}" == *-* ]]; then
+            args+=(--tag next)
+          fi
+          npm publish "${args[@]}"
+
+  release:
+    name: Publish GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish GitHub Release
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          args=(--verify-tag --generate-notes --title "${VERSION}")
+          if [[ "${VERSION}" == *-* ]]; then
+            args+=(--prerelease)
+          fi
+          gh release create "${VERSION}" "${args[@]}"
