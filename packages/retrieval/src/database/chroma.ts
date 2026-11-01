@@ -214,9 +214,7 @@ export class CorpusLoaderService {
    */
   async loadPdf(storeName: string, pdfPath: string): Promise<VectorStore> {
     const store = await this.manager.getOrCreateStore(storeName);
-    console.log(`VectorStore \`${storeName}\` ready!`);
     await store.add(await new PDFLoader(pdfPath).load());
-    console.log(`Pages from \`${pdfPath}\` added!`);
     return store;
   }
 }

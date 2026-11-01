@@ -1,4 +1,4 @@
-import {beforeAll, describe, expect, it, vi} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import * as z from 'zod';
 import {
   EntryPoint,
@@ -29,9 +29,11 @@ function counter(): StateMachine<CounterState> {
 }
 
 describe('StateMachine', () => {
-  beforeAll(() => {
-    // The machine logs each step, as the Python version prints them.
-    vi.spyOn(console, 'log').mockImplementation(() => undefined);
+  it('runs without writing to the console', async () => {
+    const log = vi.spyOn(console, 'log');
+    await counter().run({count: 0, log: []}, {vars: {step: 1}});
+    expect(log).not.toHaveBeenCalled();
+    log.mockRestore();
   });
 
   it('runs to termination and snapshots each step', async () => {

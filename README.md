@@ -127,8 +127,7 @@ console.log(run.getFinalState()?.messages.at(-1)?.content);
 ```
 
 The agent calls `add_numbers`, sends the result back to the model, and prints
-its answer, such as `2 + 3 = 5.` It also logs each step, as in
-`[StateMachine] Executing step: tool_executor`.
+its answer, such as `2 + 3 = 5.`
 
 ### Sessions
 

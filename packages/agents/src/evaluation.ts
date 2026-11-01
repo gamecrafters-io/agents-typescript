@@ -150,8 +150,6 @@ export class AgentEvaluator {
       );
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
-      console.log(`Debug: Structured parsing error: ${reason}`);
-      console.log(`Debug: Judge response content: ${judgeResponse.content}`);
       const response = agentResponse.toLowerCase();
       const hasGameInfo = FALLBACK_KEYWORDS.some((keyword) =>
         response.includes(keyword),

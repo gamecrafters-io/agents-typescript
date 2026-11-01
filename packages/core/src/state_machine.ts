@@ -251,16 +251,10 @@ export class StateMachine<State extends object> {
         throw new Error(`[StateMachine] Unknown step: ${stepId}`);
       }
       if (step instanceof Termination) {
-        console.log(`[StateMachine] Terminating: ${stepId}`);
         break;
       }
 
       current = await step.run(current, this.stateSchema, resource);
-      console.log(
-        step instanceof EntryPoint
-          ? `[StateMachine] Starting: ${stepId}`
-          : `[StateMachine] Executing step: ${stepId}`,
-      );
       run.addSnapshot(Snapshot.create(current, this.stateSchema, stepId));
 
       const nextSteps = (this.transitions.get(stepId) ?? []).flatMap(
