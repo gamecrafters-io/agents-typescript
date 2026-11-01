@@ -4,8 +4,8 @@
   <h1>@gamecrafters/agents</h1>
 
   <p>
-    Stateful AI agents with tool calling, session memory, and evaluation for
-    TypeScript and Node.js.
+    Stateful AI agents with tool calling, session memory, evaluation, and
+    retrieval-augmented generation for TypeScript and Node.js.
   </p>
 
 [![npm][npm-shield]][npm-url]
@@ -43,6 +43,7 @@
       <ul>
         <li><a href="#sessions">Sessions</a></li>
         <li><a href="#evaluation">Evaluation</a></li>
+        <li><a href="#retrieval">Retrieval</a></li>
         <li><a href="#building-blocks">Building Blocks</a></li>
       </ul>
     </li>
@@ -67,6 +68,8 @@ Key features:
 - Session memory, so a session's next query continues its conversation.
 - Evaluation of a final response with an LLM judge, of a single tool-calling
   step, or of a whole run.
+- Retrieval-augmented generation over Chroma vector stores, a PDF loader, and
+  long-term memory that finds users' facts by meaning.
 - Building blocks for your own workflows: messages, an LLM wrapper, output
   parsers, and a state machine.
 
@@ -75,6 +78,8 @@ Key features:
 - [TypeScript](https://www.typescriptlang.org/)
 - [OpenAI Node.js SDK](https://github.com/openai/openai-node)
 - [Zod](https://zod.dev/)
+- [Chroma](https://www.trychroma.com/)
+- [PDF.js](https://mozilla.github.io/pdf.js/)
 
 [Back to top](#readme-top)
 
@@ -85,6 +90,7 @@ Key features:
 - Node.js: 26 or later
 - An OpenAI API key
 - An ES module project, since the package has no CommonJS build
+- A running Chroma server, for retrieval only (see [Retrieval](#retrieval))
 
 ### Installation
 
@@ -166,16 +172,72 @@ console.log(result.overallScore, result.feedback);
 `evaluateSingleStep` checks the tool calls of one decision, and
 `evaluateFinalResponse` has an LLM judge (`gpt-4o-mini`) rate an answer.
 
+### Retrieval
+
+Retrieval keeps documents in [Chroma](https://www.trychroma.com/), so it needs
+a running Chroma server. The package connects to `http://localhost:8000` by
+default, which is where
+[Chroma's CLI](https://docs.trychroma.com/docs/cli/install) and its
+[Docker image](https://docs.trychroma.com/guides/deploy/docker) serve:
+
+```sh
+# With Chroma's CLI
+chroma run --path ./chroma-data
+
+# Or with Docker
+docker run -v ./chroma-data:/data -p 8000:8000 chromadb/chroma
+```
+
+Load a PDF, one document per page, and answer questions from it. Documents and
+questions are embedded with OpenAI's `text-embedding-ada-002`.
+
+```typescript
+import {
+  CorpusLoaderService,
+  LLM,
+  RAG,
+  VectorStoreManager,
+} from '@gamecrafters/agents';
+
+const manager = new VectorStoreManager();
+const loader = new CorpusLoaderService(manager);
+const store = await loader.loadPdf('handbook', './handbook.pdf');
+
+const rag = new RAG(new LLM(), store);
+const run = await rag.invoke('How many vacation days do new employees get?');
+console.log(run.getFinalState()?.answer);
+```
+
+Long-term memory keeps each user's facts and finds them by meaning:
+
+```typescript
+import {LongTermMemory, MemoryFragment} from '@gamecrafters/agents';
+
+// Creates the `long_term_memory` store, replacing any existing one.
+const memory = await LongTermMemory.create(manager);
+await memory.register(
+  new MemoryFragment({content: 'Prefers metric units.', owner: 'alice'}),
+);
+const {fragments} = await memory.search('Which units do I use?', 'alice');
+console.log(fragments.map((fragment) => fragment.content));
+```
+
 ### Building Blocks
 
-| Export                                                      | Use it to                                   |
-| ----------------------------------------------------------- | ------------------------------------------- |
-| `tool`, `Tool`                                              | Turn a function into a tool.                |
-| `SystemMessage`, `UserMessage`, `AssistantMessage`, …       | Build a conversation.                       |
-| `LLM`                                                       | Call chat completions with messages, tools. |
-| `StringOutputParser`, `JsonOutputParser`, `ZodOutputParser` | Read a value from a reply.                  |
-| `StateMachine`, `Step`, `EntryPoint`, `Termination`         | Build your own step-by-step workflow.       |
-| `ShortTermMemory`                                           | Keep objects per session.                   |
+| Export                                                      | Use it to                                       |
+| ----------------------------------------------------------- | ----------------------------------------------- |
+| `tool`, `Tool`                                              | Turn a function into a tool.                    |
+| `SystemMessage`, `UserMessage`, `AssistantMessage`, …       | Build a conversation.                           |
+| `LLM`                                                       | Call chat completions with messages, tools.     |
+| `StringOutputParser`, `JsonOutputParser`, `ZodOutputParser` | Read a value from a reply.                      |
+| `StateMachine`, `Step`, `EntryPoint`, `Termination`         | Build your own step-by-step workflow.           |
+| `ShortTermMemory`                                           | Keep objects per session.                       |
+| `LongTermMemory`, `MemoryFragment`                          | Remember users' facts and find them by meaning. |
+| `VectorStoreManager`, `VectorStore`                         | Store documents in Chroma and search them.      |
+| `OpenAIEmbeddingFunction`                                   | Embed texts for Chroma with OpenAI.             |
+| `Document`, `Corpus`                                        | Hold texts with IDs and metadata.               |
+| `PDFLoader`, `CorpusLoaderService`                          | Read a PDF, or load it into a vector store.     |
+| `RAG`                                                       | Answer questions from a vector store.           |
 
 [Back to top](#readme-top)
 
