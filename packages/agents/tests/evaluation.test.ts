@@ -1,15 +1,14 @@
-import {
-  AssistantMessage,
-  Run,
-  Snapshot,
-  SystemMessage,
-  ToolMessage,
-  UserMessage,
-} from '@gamecrafters/agents-core';
 import {afterAll, beforeAll, describe, expect, it, vi} from 'vitest';
 import * as z from 'zod';
 import type {AgentState} from '../src/agents.js';
 import {AgentEvaluator, type TestCase} from '../src/evaluation.js';
+import {
+  AssistantMessage,
+  SystemMessage,
+  ToolMessage,
+  UserMessage,
+} from '../src/messages.js';
+import {Run, Snapshot} from '../src/state_machine.js';
 
 const query = new UserMessage({content: 'What is 2 + 3?'});
 const messages = [

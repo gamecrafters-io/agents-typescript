@@ -3,20 +3,18 @@
  * a question, put them in the prompt, and have an LLM answer from them.
  */
 
-import {
-  EntryPoint,
-  LLM,
-  StateMachine,
-  Step,
-  SystemMessage,
-  Termination,
-  UserMessage,
-  type AnyMessage,
-  type Resource,
-  type Run,
-} from '@gamecrafters/agents-core';
 import * as z from 'zod';
 import {VectorStore} from './database/chroma.js';
+import {LLM} from './llm.js';
+import {SystemMessage, UserMessage, type AnyMessage} from './messages.js';
+import {
+  EntryPoint,
+  StateMachine,
+  Step,
+  Termination,
+  type Resource,
+  type Run,
+} from './state_machine.js';
 
 const RAG_STATE_SCHEMA = z.object({
   messages: z.array(z.custom<AnyMessage>()),

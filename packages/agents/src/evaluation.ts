@@ -4,16 +4,13 @@
  * whole run's trajectory is scored.
  */
 
-import {
-  AssistantMessage,
-  LLM,
-  ZodOutputParser,
-  type BaseMessage,
-  type Run,
-} from '@gamecrafters/agents-core';
 import {zodResponseFormat} from 'openai/helpers/zod';
 import * as z from 'zod';
 import type {AgentState} from './agents.js';
+import {LLM} from './llm.js';
+import {AssistantMessage, type BaseMessage} from './messages.js';
+import {ZodOutputParser} from './parsers.js';
+import type {Run} from './state_machine.js';
 
 /** Whether, and in how many steps, the agent completed the task. */
 export interface TaskCompletionMetrics {

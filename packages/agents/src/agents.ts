@@ -4,22 +4,23 @@
  * conversation across invocations.
  */
 
+import * as z from 'zod';
+import {LLM} from './llm.js';
+import {ShortTermMemory} from './memory.js';
 import {
-  EntryPoint,
-  LLM,
-  StateMachine,
-  Step,
   SystemMessage,
-  Termination,
   ToolMessage,
   UserMessage,
   type AnyMessage,
+} from './messages.js';
+import {
+  EntryPoint,
+  StateMachine,
+  Step,
+  Termination,
   type Run,
-  type Tool,
-  type ToolCall,
-} from '@gamecrafters/agents-core';
-import * as z from 'zod';
-import {ShortTermMemory} from './memory.js';
+} from './state_machine.js';
+import type {Tool, ToolCall} from './tooling.js';
 
 const AGENT_STATE_SCHEMA = z.object({
   /** The query this run answers. */

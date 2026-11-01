@@ -1,4 +1,0 @@
-{
-  "extends": "@gamecrafters/typescript-config/base",
-  "include": ["tests"]
-}

@@ -1,7 +1,7 @@
 {
   "name": "@gamecrafters/agents",
   "version": "0.0.1",
-  "description": "Stateful AI agents with tool calling, session memory, and evaluation.",
+  "description": "Stateful AI agents with tool calling, session memory, evaluation, and retrieval-augmented generation.",
   "license": "MIT",
   "author": "GameCrafters",
   "keywords": [
@@ -9,7 +9,11 @@
     "agents",
     "llm",
     "typescript",
-    "evaluation"
+    "evaluation",
+    "state-machine",
+    "rag",
+    "embeddings",
+    "chromadb"
   ],
   "homepage": "https://github.com/gamecrafters-io/agents-typescript#readme",
   "repository": {
@@ -50,11 +54,12 @@
     "postpack": "node -e \"const fs = require('node:fs'); fs.rmSync('README.md', {force: true}); fs.rmSync('LICENSE', {force: true});\""
   },
   "dependencies": {
+    "chromadb": "^3.5.0",
     "openai": "^7.47.0",
+    "pdfjs-dist": "^6.4.299",
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@gamecrafters/agents-core": "0.0.1",
     "@gamecrafters/eslint-config": "*",
     "@gamecrafters/typescript-config": "*",
     "@types/node": "^26.6.6",
