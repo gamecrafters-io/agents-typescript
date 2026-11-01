@@ -1,6 +1,6 @@
 {
   "name": "@gamecrafters/agents",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Stateful AI agents with tool calling, session memory, evaluation, and retrieval-augmented generation.",
   "license": "MIT",
   "author": "GameCrafters",
