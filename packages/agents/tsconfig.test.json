@@ -1,4 +1,4 @@
 {
   "extends": "@gamecrafters/typescript-config/base",
-  "include": ["tests"]
+  "include": ["tests", "tsdown.config.ts"]
 }
